@@ -22,8 +22,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  '/api': {
+  server: {
+    proxy: {
+      '/api': {
         target: 'http://syt.atguigu.cn',
         changeOrigin: true,
       },
+    }
+  }
+
 })
