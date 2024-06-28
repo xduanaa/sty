@@ -1,7 +1,7 @@
 <template>
   <div class="top">
     <div class="content">
-    <div class="left">
+    <div class="left" @click="goHome">
       <img src="../../assets/images/logo.jpg" alt="meimv">
       <span>尚医通 预约挂号平台</span>
     </div>
@@ -14,6 +14,11 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+const $router=useRouter()
+const goHome=()=>{
+  $router.push({path:'/home'})
+}
 </script>
 
 <style scoped>
@@ -34,6 +39,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.left :hover{
+  cursor: pointer;
 }
 .left img{
   width: 50px;

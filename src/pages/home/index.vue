@@ -10,12 +10,13 @@
     </div>
     <div class="search">
       <el-autocomplete
-        v-model="state1"
+        v-model="housname"
         :fetch-suggestions="querySearch"
+        :trigger-on-focus="false"
         clearable
         class="inline-input"
         placeholder="请输入要查询的医院"
-        @select="handleSelect"
+        @select="gotohouspital"
       />
       <el-button type="primary">搜索</el-button>
     </div>
@@ -30,8 +31,21 @@
           <div class="hospital">
             <h1>等级:</h1>
             <ul style="display: flex">
-              <li :class="{active:activeFlag==''}" @click="changeleve('')"    style="margin-left: 18px">全部</li>
-              <li v-for="hl in hospitalLevenArr" :key="hl" :class="{active:activeFlag==hl.value}" @click="changeleve(hl.value)">{{ hl.name }}</li>
+              <li
+                :class="{ active: activeFlag == '' }"
+                @click="changeleve('')"
+                style="margin-left: 18px"
+              >
+                全部
+              </li>
+              <li
+                v-for="hl in hospitalLevenArr"
+                :key="hl"
+                :class="{ active: activeFlag == hl.value }"
+                @click="changeleve(hl.value)"
+              >
+                {{ hl.name }}
+              </li>
             </ul>
           </div>
         </div>
@@ -39,8 +53,15 @@
         <div class="diqu">
           <h1 style="width: 60px; margin-top: 5px">地区:</h1>
           <ul style="display: flex; flex-wrap: wrap">
-            <li :class="{active:activeflag==''}"  @click="changeactive('')">全部</li>
-            <li v-for="hr in hospitalRegArr" :key="hr" :class="{active:activeflag==hr.id}" @click="changeactive(hr.id)">{{hr.name}}</li>
+            <li :class="{ active: activeflag == '' }" @click="changeactive('')">全部</li>
+            <li
+              v-for="hr in hospitalRegArr"
+              :key="hr"
+              :class="{ active: activeflag == hr.id }"
+              @click="changeactive(hr.id)"
+            >
+              {{ hr.name }}
+            </li>
           </ul>
         </div>
         <!-- 医院卡片 -->
@@ -54,7 +75,9 @@
                   <span>每天:{{ item.bookingRule?.releaseTime }}放号</span>
                 </div>
               </div>
-              <div class="yyxq-right"><img :src="`data:image/jpeg;base64,${item.logoData}`" alt="" /></div>
+              <div class="yyxq-right">
+                <img :src="`data:image/jpeg;base64,${item.logoData}`" alt="" />
+              </div>
             </div>
           </el-card>
         </div>
@@ -69,44 +92,55 @@
           @size-change="sizeChange"
         />
       </el-col>
-      <el-col :span="6">456</el-col>
+      <el-col :span="6">
+        <Tip/>
+      </el-col>
     </el-row>
   </div>
 </template>
 <script setup>
-import { reqHospital,reqHpspitalLeveAndRen } from '@/api/home'
+import { reqHospital, reqHpspitalLeveAndRen, reqHosInfo } from '@/api/home'
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
+import Tip from './tip/index.vue'
 let pageNo = ref(1)
 let pageSize = ref(10)
 let hospitalArr = ref([])
 let hostpitalTotal = ref(0)
-let hospitalLevenArr=ref([])
+let hospitalLevenArr = ref([])
 let activeFlag = ref('')
-let hospitalRegArr=ref([])
-let activeflag=ref('')
-let hispitalType=ref('')
-let districtCode=ref('')
+let hospitalRegArr = ref([])
+let activeflag = ref('')
+let hispitalType = ref('')
+let districtCode = ref('')
+let housname = ref('')
 onMounted(() => {
   getHospitalInfo()
   getHospitalLeven()
   getHospitalReg()
 })
-const changeactive = (hr)=>{
-  activeflag.value=hr
+const $router=useRouter()
+const changeactive = (hr) => {
+  activeflag.value = hr
   console.log(activeflag.value)
-  districtCode.value=activeflag.value
+  districtCode.value = activeflag.value
   getHospitalInfo()
-  console.log(11)
+  // console.log(11)
 }
 
-const changeleve=(hl)=>{
-    activeFlag.value=hl
-    // console.log(activeFlag.value)
-    hispitalType.value=hl
-    getHospitalInfo()
+const changeleve = (hl) => {
+  activeFlag.value = hl
+  // console.log(activeFlag.value)
+  hispitalType.value = hl
+  getHospitalInfo()
 }
 const getHospitalInfo = async () => {
-  let resultInfo = await reqHospital(pageNo.value, pageSize.value,hispitalType.value,districtCode.value)
+  let resultInfo = await reqHospital(
+    pageNo.value,
+    pageSize.value,
+    hispitalType.value,
+    districtCode.value
+  )
   // console.log(resultInfo)
   if (resultInfo.code === 200) {
     hospitalArr.value = resultInfo.data.content
@@ -119,22 +153,36 @@ const currentChange = () => {
 const sizeChange = () => {
   getHospitalInfo()
 }
-const getHospitalLeven= async ()=>{
+const getHospitalLeven = async () => {
   let hostpitalLeven = await reqHpspitalLeveAndRen('hostype')
   // console.log("医院等级",hostpitalLeven)
-  if(hostpitalLeven.code==200){
-    hospitalLevenArr.value=hostpitalLeven.data
+  if (hostpitalLeven.code == 200) {
+    hospitalLevenArr.value = hostpitalLeven.data
     // console.log(hostpitalLeven.data)
   }
 }
-const getHospitalReg= async ()=>{
+const getHospitalReg = async () => {
   let hospitalReg = await reqHpspitalLeveAndRen('beijin')
-  console.log('diqu',hospitalReg)
-  if(hospitalReg.code==200){
-    hospitalRegArr.value=hospitalReg.data
+  // console.log('diqu', hospitalReg)
+  if (hospitalReg.code == 200) {
+    hospitalRegArr.value = hospitalReg.data
   }
 }
-
+//搜索框
+const querySearch = async (queryString,cb) => {
+  let resultHousInfo = await reqHosInfo(queryString)
+  console.log(resultHousInfo.data)
+  let HousIndoArr = resultHousInfo.data.map((item) => {
+    return {
+      value: item.hosname,
+      houcode:item.hoscode
+    }
+  })
+  cb(HousIndoArr)
+}
+const gotohouspital=()=>{
+    $router.push({path:"/hospital"})
+}
 </script>
 
 <style scoped>
@@ -184,7 +232,7 @@ const getHospitalReg= async ()=>{
   color: aqua;
   cursor: pointer;
 }
-.hospital li.active{
+.hospital li.active {
   color: aqua;
 }
 .diqu {
@@ -199,7 +247,7 @@ const getHospitalReg= async ()=>{
   color: aqua;
   cursor: pointer;
 }
-.diqu li.active{
+.diqu li.active {
   color: aqua;
 }
 .yy {
