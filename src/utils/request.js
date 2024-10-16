@@ -1,4 +1,6 @@
 import axios from 'axios'
+import useUserStore from '@/store/modules/use';
+
 
 const request=axios.create({
   baseURL:'/api',
@@ -7,6 +9,11 @@ const request=axios.create({
 
 //请求拦截器
 request.interceptors.request.use((config)=>{
+  const useStore=useUserStore()
+  // console.log(useStore.userData)
+  if(useStore.userData.token){
+    config.headers.token=useStore.userData.token
+  }
   // console.log(11,config)
   return config
 })

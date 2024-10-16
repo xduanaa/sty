@@ -3,7 +3,7 @@
     <div class="top">
       <div class="top-d">
         <span class="left">常见科室</span>
-        <div><span class="right">全部</span> <span class="icon">></span></div>
+        <div><span class="right">全部</span><span class="icon">></span></div>
       </div>
       <ul style="display: flex; justify-content: space-between">
         <li v-for="(k, index) in kArr" :key="index">{{ k }}</li>
@@ -12,7 +12,7 @@
     <div class="zj">
       <div class="zj-d" style="display: flex; justify-content: space-between">
         <span class="left-b" style="color: black; margin-bottom: 15px">平台公告</span>
-        <div class="right-b"><span>全部</span> <span class="icon-b">></span></div>
+        <div class="right-b"><span>全部</span><span class="icon-b">></span></div>
       </div>
       <ul style="display: flex; justify-content: space-between; flex-wrap: wrap" class="tital">
         <li>关于延长北京大学国际医院放假的通知</li>
@@ -23,7 +23,7 @@
     <div class="buttom">
       <div class="zj-t" style="display: flex; justify-content: space-between">
         <span class="left-t" style="color: black; margin-bottom: 15px">停诊公告</span>
-        <div class="right-t"><span>全部</span> <span class="icon-t">></span></div>
+        <div class="right-t"><span>全部</span><span class="icon-t">></span></div>
       </div>
       <ul style="display: flex; justify-content: space-between; flex-wrap: wrap" class="tital-t">
         <li>中国人民解放军总医院第六医学中心(原海军总医院)呼吸内科门诊停诊公告</li>
@@ -43,6 +43,8 @@ kArr.value = ['神经内科', '消化内科', '内科', '神经外科', '妇科'
 <style scoped>
 .content {
   margin-left: 50px;
+  display: flex;
+  flex-direction: column;
 }
 .left {
   color: black;
@@ -58,6 +60,9 @@ kArr.value = ['神经内科', '消化内科', '内科', '神经外科', '妇科'
   color: #4490f1;
   font-size: 14px;
 }
+.top {
+  height: 200px;
+}
 .top-d {
   margin: 20px 0;
   display: flex;
@@ -72,13 +77,14 @@ kArr.value = ['神经内科', '消化内科', '内科', '神经外科', '妇科'
   width: 40%;
   margin: 7px auto;
   color: #333;
+  height: 100%;
 }
-.content li:hover{
-  color:skyblue;
-  cursor: pointer;;
+.content li:hover {
+  color: skyblue;
+  cursor: pointer;
 }
 .zj {
-  margin: 30px 0;
+  margin-bottom: 30px;
 }
 .left-b {
   color: black;
@@ -132,5 +138,7 @@ kArr.value = ['神经内科', '消化内科', '内科', '神经外科', '妇科'
   display: block;
   white-space: nowrap;
 }
-
+span:hover {
+  cursor: default;
+}
 </style>

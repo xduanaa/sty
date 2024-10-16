@@ -1,7 +1,7 @@
 <template>
   <div class="hospital">
     <div class="menu">
-      <el-menu :default-active=$route.path class="el-menu-vertical-demo" >
+      <el-menu :default-active="$route.path" class="el-menu-vertical-demo">
         <el-menu-item index="/hospital/registry" @click="changeactive('/hospital/registry')">
           <el-icon><icon-menu /></el-icon>
           <span>预约挂号 </span>
@@ -32,19 +32,28 @@
 
 <script setup>
 import { Document, Menu as IconMenu, Setting, Remove, InfoFilled } from '@element-plus/icons-vue'
-import { useRouter,useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { onMounted } from 'vue'
+import useRegistryStore from '@/store/modules/registry'
+
+let registryStore = useRegistryStore()
 let $route = useRoute()
 let $router = useRouter()
-const changeactive=(path)=>{
-  $router.push({path})
+onMounted(() => {
+  registryStore.getHospital($route.query.hoscode)
+  registryStore.getDepart($route.query.hoscode)
+})
+const changeactive = (path) => {
+  $router.push({ path ,query:{hoscode:$route.query.hoscode} })
   console.log($route.path)
 }
 </script>
 
 <style scoped>
+/* 向上顶了顶部组件80px */
 .hospital {
   display: flex;
-  margin-top: 40px;
+  margin-top: 80px;/* 向上顶了顶部组件80px */
 }
 .menu {
   flex: 2;

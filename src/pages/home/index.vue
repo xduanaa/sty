@@ -1,6 +1,6 @@
 <template>
   <!-- 搜索框 -->
-  <div>
+  <div class="home_top">
     <div class="block text-center">
       <el-carousel height="350px">
         <el-carousel-item v-for="item in 4" :key="item">
@@ -66,7 +66,13 @@
         </div>
         <!-- 医院卡片 -->
         <div class="yy">
-          <el-card shadow="hover" v-for="(item, index) in hospitalArr" :key="index" class="yyxq">
+          <el-card
+            shadow="hover"
+            v-for="(item, index) in hospitalArr"
+            :key="index"
+            class="yyxq"
+            @click="gotohospital(item)"
+          >
             <div class="yyxq-content">
               <div class="yyxq-left">
                 <h1>{{ item.hosname }}</h1>
@@ -93,7 +99,7 @@
         />
       </el-col>
       <el-col :span="6">
-        <Tip/>
+        <Tip />
       </el-col>
     </el-row>
   </div>
@@ -101,8 +107,9 @@
 <script setup>
 import { reqHospital, reqHpspitalLeveAndRen, reqHosInfo } from '@/api/home'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 import Tip from './tip/index.vue'
+const $router = useRouter()
 let pageNo = ref(1)
 let pageSize = ref(10)
 let hospitalArr = ref([])
@@ -114,20 +121,23 @@ let activeflag = ref('')
 let hispitalType = ref('')
 let districtCode = ref('')
 let housname = ref('')
+
 onMounted(() => {
   getHospitalInfo()
   getHospitalLeven()
   getHospitalReg()
 })
-const $router=useRouter()
 const changeactive = (hr) => {
   activeflag.value = hr
-  console.log(activeflag.value)
+  // console.log(activeflag.value)
   districtCode.value = activeflag.value
   getHospitalInfo()
   // console.log(11)
 }
-
+const gotohospital = (item) => {
+  // console.log(item.hoscode)
+  $router.push({ path: 'hospital/registry', query: { hoscode: item.hoscode } })
+}
 const changeleve = (hl) => {
   activeFlag.value = hl
   // console.log(activeFlag.value)
@@ -169,23 +179,28 @@ const getHospitalReg = async () => {
   }
 }
 //搜索框
-const querySearch = async (queryString,cb) => {
+const querySearch = async (queryString, cb) => {
   let resultHousInfo = await reqHosInfo(queryString)
   console.log(resultHousInfo.data)
   let HousIndoArr = resultHousInfo.data.map((item) => {
     return {
       value: item.hosname,
-      houcode:item.hoscode
+      hoscode: item.hoscode
     }
   })
   cb(HousIndoArr)
 }
-const gotohouspital=()=>{
-    $router.push({path:"/hospital"})
+const gotohouspital = (item) => {
+  // console.log(item)
+  $router.push({ path: '/hospital/registry', query: { hoscode: item.hoscode } })
 }
 </script>
 
 <style scoped>
+/* 向上顶了顶部组件80px */
+.home_top {
+  margin-top: 80px;
+}
 .el-input__inner {
   width: 400px;
 }
@@ -250,10 +265,12 @@ const gotohouspital=()=>{
 .diqu li.active {
   color: aqua;
 }
+/* 向下顶了底部组件50px高度 */
 .yy {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  margin-bottom: 50px; /* 向下顶了底部组件50px高度 */
 }
 .yyxq {
   width: 48%;
@@ -274,5 +291,8 @@ const gotohouspital=()=>{
 }
 .yyxq-buttom span {
   margin-right: 50px;
+}
+h1:hover {
+  cursor: default;
 }
 </style>

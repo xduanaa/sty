@@ -10,6 +10,8 @@
     </div>
     <!-- bottom区域 -->
     <HospitalBottom />
+    <!-- 登录组件 -->
+    <Login/>
   </div>
 </template>
 

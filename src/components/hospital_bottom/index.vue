@@ -24,6 +24,10 @@
   display: flex;
   justify-content: center;
   background-color: #fafafa;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
 }
 .conter{
   width: 1200px;
@@ -56,5 +60,7 @@
 .right :last-child{
   margin-right: 0;
 }
-
+.foot:hover{
+  cursor: default
+}
 </style>
